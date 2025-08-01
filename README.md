@@ -22,7 +22,7 @@ This repository contains a comprehensive script for automated WireGuard VPN inst
 
 1. **Download the script**:
    ```bash
-   wget https://raw.githubusercontent.com/not2cleverdotme/Oracle_Cloud_Wireguard/refs/heads/main/wireguard_oracle_cloud_install.sh
+   wget https://raw.githubusercontent.com/not2cleverdotme/wireguard_oracle_cloud_install.sh
    ```
 
 2. **Make it executable**:
@@ -215,11 +215,53 @@ The script configures:
 
 ## Oracle Cloud Specific Notes
 
-### Security Lists
-Ensure your OCI security list allows UDP traffic on the WireGuard port:
-1. Go to OCI Console → Networking → Virtual Cloud Networks
-2. Select your VCN → Security Lists
-3. Add ingress rule: UDP, port range (your WireGuard port), source 0.0.0.0/0
+### Security Lists Configuration
+
+**Required Ports to Open:**
+
+1. **WireGuard UDP Port** (randomly assigned, e.g., 51820)
+   - Protocol: UDP
+   - Port: Your specific WireGuard port
+   - Source: 0.0.0.0/0
+
+2. **SSH Access** (TCP 22)
+   - Protocol: TCP
+   - Port: 22
+   - Source: 0.0.0.0/0 (or your IP for security)
+
+3. **Optional Web Services**
+   - HTTP: TCP 80
+   - HTTPS: TCP 443
+
+**Quick Setup:**
+
+Use the provided helper script to get your exact configuration:
+```bash
+./oci_network_setup.sh
+```
+
+**Manual Configuration:**
+
+1. Find your WireGuard port:
+   ```bash
+   grep "ListenPort" /etc/wireguard/wg0.conf
+   ```
+
+2. Go to OCI Console → Networking → Virtual Cloud Networks
+3. Select your VCN → Security Lists
+4. Add ingress rules:
+
+| Source | Protocol | Source Port Range | Destination Port | Description |
+|--------|----------|-------------------|------------------|-------------|
+| 0.0.0.0/0 | UDP | All | `[YOUR_WG_PORT]` | WireGuard VPN |
+| 0.0.0.0/0 | TCP | All | 22 | SSH Access |
+
+**Security Best Practices:**
+
+For enhanced security, restrict access to your specific IP:
+```
+Source: YOUR_IP/32 (instead of 0.0.0.0/0)
+```
 
 ### Instance Configuration
 - Recommended: VM.Standard2.1 or higher
