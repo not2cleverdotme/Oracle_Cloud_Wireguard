@@ -158,13 +158,34 @@ The script configures:
    sudo ./wireguard_oracle_cloud_install.sh
    ```
 
-2. **WireGuard service not starting**
+2. **PPA Error on Ubuntu** (Cannot add PPA: 'ppa:~wireguard/ubuntu/wireguard')
+   
+   This error occurs when the WireGuard PPA is not available for your Ubuntu version. The script now handles this automatically by:
+   - First trying the universe repository (most reliable)
+   - Falling back to PPA if available
+   - Using backports for Debian systems
+   - Manual repository setup as last resort
+   
+   If you still encounter issues, you can manually install WireGuard:
+   ```bash
+   # For Ubuntu 20.04+
+   sudo apt update
+   sudo apt install wireguard
+   
+   # For older Ubuntu versions
+   sudo apt install software-properties-common
+   sudo add-apt-repository ppa:wireguard/wireguard
+   sudo apt update
+   sudo apt install wireguard
+   ```
+
+3. **WireGuard service not starting**
    ```bash
    systemctl status wg-quick@wg0
    journalctl -u wg-quick@wg0
    ```
 
-3. **Firewall blocking connections**
+4. **Firewall blocking connections**
    ```bash
    # Check firewall status
    firewall-cmd --list-all  # For firewalld
@@ -172,7 +193,7 @@ The script configures:
    iptables -L              # For iptables
    ```
 
-4. **Client cannot connect**
+5. **Client cannot connect**
    - Verify server public IP is correct
    - Check WireGuard port is open
    - Ensure client configuration is properly imported

@@ -96,11 +96,37 @@ install_packages() {
             yum install -y wireguard-tools iptables-services
             ;;
         "apt")
-            # Add WireGuard repository for Ubuntu/Debian
-            apt install -y software-properties-common
-            add-apt-repository ppa:wireguard/wireguard -y
+            # Install WireGuard for Ubuntu/Debian with multiple fallback methods
+            apt install -y software-properties-common curl
+            
+            # Method 1: Try to install from universe repository first (most reliable)
             apt update
-            apt install -y wireguard iptables
+            if apt install -y wireguard iptables; then
+                log "WireGuard installed from universe repository"
+            else
+                # Method 2: Try PPA (may not be available on all Ubuntu versions)
+                if add-apt-repository ppa:wireguard/wireguard -y 2>/dev/null; then
+                    apt update
+                    apt install -y wireguard iptables
+                    log "WireGuard installed from PPA"
+                else
+                    # Method 3: Install from backports for Debian
+                    if command -v lsb_release &> /dev/null; then
+                        echo "deb http://deb.debian.org/debian $(lsb_release -cs)-backports main" | tee /etc/apt/sources.list.d/backports.list
+                        apt update
+                        apt install -y wireguard iptables
+                        log "WireGuard installed from backports"
+                    else
+                        # Method 4: Manual installation from official repository
+                        apt install -y dirmngr
+                        apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 04EE7237B7D453EC
+                        echo "deb http://deb.debian.org/debian $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/wireguard.list
+                        apt update
+                        apt install -y wireguard iptables
+                        log "WireGuard installed from official repository"
+                    fi
+                fi
+            fi
             ;;
     esac
 }
