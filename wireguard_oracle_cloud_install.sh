@@ -258,6 +258,49 @@ configure_firewall() {
             fi
             ;;
     esac
+    
+    # Fix common firewall issues that block WireGuard traffic
+    fix_firewall_issues
+}
+
+# Fix common firewall issues
+fix_firewall_issues() {
+    log "Checking for common firewall issues..."
+    
+    # Remove problematic REJECT rules that block all traffic
+    if iptables -L FORWARD -n | grep -q "REJECT.*reject-with icmp-host-prohibited"; then
+        log "Found problematic REJECT rule, removing it..."
+        local line_number=$(iptables -L FORWARD -n --line-numbers | grep "REJECT.*reject-with icmp-host-prohibited" | awk '{print $1}')
+        if [[ -n "$line_number" ]]; then
+            iptables -D FORWARD "$line_number"
+            log "✓ Removed REJECT rule from FORWARD chain"
+        fi
+    fi
+    
+    # Also check INPUT chain for similar issues
+    if iptables -L INPUT -n | grep -q "REJECT.*reject-with icmp-host-prohibited"; then
+        log "Found REJECT rule in INPUT chain, removing it..."
+        local line_number=$(iptables -L INPUT -n --line-numbers | grep "REJECT.*reject-with icmp-host-prohibited" | awk '{print $1}')
+        if [[ -n "$line_number" ]]; then
+            iptables -D INPUT "$line_number"
+            log "✓ Removed REJECT rule from INPUT chain"
+        fi
+    fi
+    
+    # Ensure proper NAT rules for both eth0 and ens3 (common on Oracle Cloud)
+    if ip link show eth0 &>/dev/null; then
+        iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE 2>/dev/null || true
+        iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+        log "✓ Added NAT rule for eth0"
+    fi
+    
+    if ip link show ens3 &>/dev/null; then
+        iptables -t nat -D POSTROUTING -o ens3 -j MASQUERADE 2>/dev/null || true
+        iptables -t nat -A POSTROUTING -o ens3 -j MASQUERADE
+        log "✓ Added NAT rule for ens3"
+    fi
+    
+    log "✓ Firewall issues fixed"
 }
 
 # Create systemd service
