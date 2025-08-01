@@ -38,7 +38,7 @@ That's it! No technical knowledge required.
 
 ### **Step 1: Download the Installation Script**
 ```bash
-wget https://raw.githubusercontent.com/not2cleverdotme/wireguard_oracle_cloud_install.sh
+wget https://raw.githubusercontent.com/not2cleverdotme/Oracle_Cloud_Wireguard/refs/heads/main/wireguard_oracle_cloud_install.sh
 ```
 
 ### **Step 2: Make it Executable**
