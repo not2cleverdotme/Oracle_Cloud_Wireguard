@@ -20,14 +20,19 @@ This repository contains a comprehensive script for automated WireGuard VPN inst
 
 ## Quick Start
 
-1. **Download the script**:
+1. **Download the scripts**:
    ```bash
    wget https://raw.githubusercontent.com/not2cleverdotme/wireguard_oracle_cloud_install.sh
+   wget https://raw.githubusercontent.com/not2cleverdotme/wireguard_uninstall.sh
+   wget https://raw.githubusercontent.com/not2cleverdotme/test_wireguard.sh
+   wget https://raw.githubusercontent.com/not2cleverdotme/oci_network_setup.sh
+   wget https://raw.githubusercontent.com/not2cleverdotme/wireguard_troubleshoot.sh
+   wget https://raw.githubusercontent.com/not2cleverdotme/wireguard_fix.sh
    ```
 
-2. **Make it executable**:
+2. **Make them executable**:
    ```bash
-   chmod +x wireguard_oracle_cloud_install.sh
+   chmod +x wireguard_*.sh oci_network_setup.sh
    ```
 
 3. **Run the installation**:
@@ -35,38 +40,83 @@ This repository contains a comprehensive script for automated WireGuard VPN inst
    sudo ./wireguard_oracle_cloud_install.sh
    ```
 
-## What the Script Does
+## Scripts Overview
 
-### 1. System Detection
+### **Main Installation Script** (`wireguard_oracle_cloud_install.sh`)
+Complete automated WireGuard installation with:
+
+#### 1. System Detection
 - Detects the operating system (Oracle Linux, Ubuntu, etc.)
 - Identifies the appropriate package manager (yum/apt)
 - Validates system requirements
 
-### 2. Package Installation
+#### 2. Package Installation
 - Updates system packages
 - Installs WireGuard and dependencies
 - Configures repositories as needed
 
-### 3. WireGuard Setup
+#### 3. WireGuard Setup
 - Generates cryptographic keys
 - Creates server configuration
 - Sets up networking and routing
 - Configures IP forwarding
 
-### 4. Firewall Configuration
+#### 4. Firewall Configuration
 - Opens WireGuard port (UDP)
 - Configures NAT and forwarding rules
 - Supports firewalld, ufw, and iptables
 
-### 5. Service Management
+#### 5. Service Management
 - Creates systemd service
 - Enables auto-start
 - Starts WireGuard service
 
-### 6. Management Tools
+#### 6. Management Tools
 - Client management script (`wg-client`)
 - Status monitoring script (`wg-status`)
 - Configuration templates
+
+### **Uninstall Script** (`wireguard_uninstall.sh`)
+Safely removes WireGuard installation:
+- Stops and removes WireGuard service
+- Cleans up firewall rules
+- Removes configuration files (with backup)
+- Restores system settings
+- Confirmation prompts for safety
+
+### **Test Script** (`test_wireguard.sh`)
+Validates installation and connectivity:
+- Tests service status, interface, configuration
+- Checks firewall rules and IP forwarding
+- Verifies management scripts
+- Shows system information and connectivity
+- Provides detailed test results
+
+### **OCI Network Setup Helper** (`oci_network_setup.sh`)
+Configures Oracle Cloud Security Lists:
+- Detects WireGuard port and server IP
+- Generates OCI security list configuration
+- Provides Terraform configuration
+- Shows step-by-step setup instructions
+- Includes testing and troubleshooting tips
+
+### **Troubleshooting Script** (`wireguard_troubleshoot.sh`)
+Comprehensive diagnostic tool:
+- Tests DNS resolution with multiple servers
+- Checks IP forwarding and firewall rules
+- Validates routing and peer connections
+- Tests connectivity (ping, DNS, HTTP)
+- Provides client-side troubleshooting guide
+- Shows detailed server configuration
+
+### **Fix Script** (`wireguard_fix.sh`)
+Automated fix for common issues:
+- Restarts WireGuard service
+- Adds missing firewall rules
+- Fixes DNS resolution issues
+- Cleans up routing conflicts
+- Updates client configurations
+- Tests connectivity after fixes
 
 ## Post-Installation
 
@@ -109,6 +159,38 @@ systemctl restart wg-quick@wg0
 
 # Check service status
 systemctl status wg-quick@wg0
+```
+
+## Additional Scripts Usage
+
+### **Test Installation**
+```bash
+# Run comprehensive tests
+sudo ./test_wireguard.sh
+```
+
+### **Configure OCI Security Lists**
+```bash
+# Get OCI configuration instructions
+sudo ./oci_network_setup.sh
+```
+
+### **Troubleshoot Issues**
+```bash
+# Run diagnostics
+sudo ./wireguard_troubleshoot.sh
+```
+
+### **Fix Common Problems**
+```bash
+# Apply automated fixes
+sudo ./wireguard_fix.sh
+```
+
+### **Uninstall WireGuard**
+```bash
+# Safely remove installation
+sudo ./wireguard_uninstall.sh
 ```
 
 ## Client Configuration
@@ -214,20 +296,37 @@ The script configures:
    sudo ./wireguard_troubleshoot.sh
    ```
 
-2. **Common fixes**:
+2. **Apply automated fixes**:
+   ```bash
+   sudo ./wireguard_fix.sh
+   ```
+
+3. **Common fixes**:
    - **DNS Issues**: Ensure client config has multiple DNS servers
    - **IP Forwarding**: Check if enabled on server
    - **Firewall Rules**: Verify WireGuard port is open
    - **Routing**: Ensure traffic is routed through VPN
 
-3. **Client-side checks**:
+4. **Client-side checks**:
    - Test DNS: `nslookup google.com`
    - Test connectivity: `ping 8.8.8.8`
    - Check routing: `ip route show`
 
-4. **Alternative DNS servers** to try in client config:
+5. **Alternative DNS servers** to try in client config:
    ```
    DNS = 8.8.8.8, 8.8.4.4, 1.1.1.1, 1.0.0.1
+   ```
+
+6. **Quick diagnostic workflow**:
+   ```bash
+   # Step 1: Run diagnostics
+   sudo ./wireguard_troubleshoot.sh
+   
+   # Step 2: Apply fixes
+   sudo ./wireguard_fix.sh
+   
+   # Step 3: Test again
+   sudo ./test_wireguard.sh
    ```
 
 ## File Locations
@@ -237,6 +336,15 @@ The script configures:
 - **Keys**: `/etc/wireguard/privatekey`, `/etc/wireguard/publickey`
 - **Management Scripts**: `/usr/local/bin/wg-client`, `/usr/local/bin/wg-status`
 - **Installation Summary**: `/etc/wireguard/INSTALLATION_SUMMARY.txt`
+
+## Script Files
+
+- **Main Installation**: `wireguard_oracle_cloud_install.sh`
+- **Uninstall**: `wireguard_uninstall.sh`
+- **Testing**: `test_wireguard.sh`
+- **OCI Setup**: `oci_network_setup.sh`
+- **Troubleshooting**: `wireguard_troubleshoot.sh`
+- **Fix Script**: `wireguard_fix.sh`
 
 ## Oracle Cloud Specific Notes
 
@@ -338,3 +446,31 @@ To contribute to this project:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For issues and questions:
+- Check the troubleshooting section
+- Review logs and status output
+- Ensure Oracle Cloud security lists are properly configured
+- Verify network connectivity and firewall rules
+- Use the provided troubleshooting and fix scripts
+
+## Changelog
+
+### Version 1.1
+- Added comprehensive troubleshooting script (`wireguard_troubleshoot.sh`)
+- Added automated fix script for common issues (`wireguard_fix.sh`)
+- Added OCI network setup helper (`oci_network_setup.sh`)
+- Added uninstall script with backup functionality (`wireguard_uninstall.sh`)
+- Added test script for validation (`test_wireguard.sh`)
+- Improved DNS configuration with multiple servers
+- Enhanced error handling and logging
+- Added comprehensive documentation
+
+### Version 1.0
+- Initial release
+- Multi-OS support
+- Automated installation
+- Client management tools
+- Oracle Cloud optimization
