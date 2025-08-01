@@ -22,7 +22,7 @@ This repository contains a comprehensive script for automated WireGuard VPN inst
 
 1. **Download the script**:
    ```bash
-   wget https://raw.githubusercontent.com/not2cleverdotme/wireguard_oracle_cloud_install.sh
+   wget https://raw.githubusercontent.com/not2cleverdotme/Oracle_Cloud_Wireguard/refs/heads/main/wireguard_oracle_cloud_install.sh
    ```
 
 2. **Make it executable**:
