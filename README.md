@@ -205,6 +205,31 @@ The script configures:
 - **Interface status**: `ip link show wg0`
 - **Routing table**: `ip route show`
 
+### Troubleshooting Connectivity Issues
+
+**If you can't browse websites after connecting to WireGuard:**
+
+1. **Run the troubleshooting script**:
+   ```bash
+   sudo ./wireguard_troubleshoot.sh
+   ```
+
+2. **Common fixes**:
+   - **DNS Issues**: Ensure client config has multiple DNS servers
+   - **IP Forwarding**: Check if enabled on server
+   - **Firewall Rules**: Verify WireGuard port is open
+   - **Routing**: Ensure traffic is routed through VPN
+
+3. **Client-side checks**:
+   - Test DNS: `nslookup google.com`
+   - Test connectivity: `ping 8.8.8.8`
+   - Check routing: `ip route show`
+
+4. **Alternative DNS servers** to try in client config:
+   ```
+   DNS = 8.8.8.8, 8.8.4.4, 1.1.1.1, 1.0.0.1
+   ```
+
 ## File Locations
 
 - **Server Config**: `/etc/wireguard/wg0.conf`

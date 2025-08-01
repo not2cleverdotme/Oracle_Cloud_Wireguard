@@ -295,7 +295,7 @@ create_client_template() {
 [Interface]
 PrivateKey = CLIENT_PRIVATE_KEY
 Address = $SUBNET.CLIENT_IP/24
-DNS = 8.8.8.8, 8.8.4.4
+DNS = 8.8.8.8, 8.8.4.4, 1.1.1.1
 
 [Peer]
 PublicKey = $PUBLIC_KEY
@@ -343,7 +343,7 @@ case "$1" in
 [Interface]
 PrivateKey = $(cat "$CLIENTS_DIR/${CLIENT_NAME}_private.key")
 Address = 10.0.0.$CLIENT_IP/24
-DNS = 8.8.8.8, 8.8.4.4
+DNS = 8.8.8.8, 8.8.4.4, 1.1.1.1
 
 [Peer]
 PublicKey = $(cat "$WG_DIR/publickey")
